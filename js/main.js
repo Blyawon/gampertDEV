@@ -107,16 +107,21 @@
 
   function maximize(id) {
     var w = $(id); if (!w) return; sMax();
-    // if already fullscreen, exit
+    // if already fullscreen (desktop API), exit
     if (document.fullscreenElement === w) {
       document.exitFullscreen();
-    } else {
-      w.classList.remove('hidden','mini'); w.classList.add('maxi'); focus(id);
-      // use the real Fullscreen API — requestFullscreen() must be
-      // called from a user gesture (click). it returns a promise.
-      var rfs = w.requestFullscreen || w.webkitRequestFullscreen || w.msRequestFullscreen;
-      if (rfs) rfs.call(w);
+      return;
     }
+    // on mobile, Fullscreen API isn't supported for divs (iOS) or is flaky — use .maxi only and toggle off when tapped again
+    if (mobile() && w.classList.contains('maxi')) {
+      w.classList.remove('maxi');
+      focus(id);
+      return;
+    }
+    w.classList.remove('hidden','mini'); w.classList.add('maxi'); focus(id);
+    if (mobile()) return;
+    var rfs = w.requestFullscreen || w.webkitRequestFullscreen || w.msRequestFullscreen;
+    if (rfs) rfs.call(w);
   }
 
   // when the user exits fullscreen (e.g. pressing Escape), the browser
@@ -808,6 +813,7 @@
   var popupShown = false;
   setTimeout(function() {
     if (popupShown) return;
+    if (ssOn) { popupShown = true; return; } // don't interrupt the screensaver
     popupShown = true;
     var popupMsg = popupMsgs[Math.random() * popupMsgs.length | 0];
     // Keep popup body tone consistent: strip exclamation marks from content area.
@@ -820,6 +826,12 @@
     $('y2kPopup').classList.remove('on');
     sClick();
   };
+
+  // draggable by the title bar (ignore the close button)
+  (function() {
+    var popup = $('y2kPopup'), bar = popup && popup.querySelector('.y2k-bar');
+    if (bar) makeDraggable(bar, popup, '.wbtn');
+  })();
 
   // =========================================================
   //  CRT MODE — toggle from the start menu.
@@ -880,14 +892,14 @@
 
     // if the element is in normal document flow, pop it out to
     // position:fixed at its current visual location so dragging works.
+    // for already-fixed elements (e.g. y2k popup) we still set left/top/floating
+    // so the first drag snaps to current position and any centering transform can be cleared via .floating.
     function floatOut() {
-      if (getComputedStyle(el).position !== 'fixed') {
-        var rect = el.getBoundingClientRect();
-        el.classList.add('floating');
-        el.style.left  = rect.left + 'px';
-        el.style.top   = rect.top + 'px';
-        el.style.width = rect.width + 'px';
-      }
+      var rect = el.getBoundingClientRect();
+      el.classList.add('floating');
+      el.style.left  = rect.left + 'px';
+      el.style.top   = rect.top + 'px';
+      if (getComputedStyle(el).position !== 'fixed') el.style.width = rect.width + 'px';
       el.style.zIndex = ++zTop;
     }
 

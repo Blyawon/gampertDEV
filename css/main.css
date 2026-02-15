@@ -312,7 +312,7 @@
     .t-live { color: #00ff88; border-color: #00ff88; }
     .t-wip  { color: #ffcc00; border-color: #ffcc00; }
     .proj-desc { color: #999; font-size: 12px; }
-    .proj-date { font: 11px 'VT323', monospace; color: #555; letter-spacing: 1px; }
+    .proj-date { font: 11px 'VT323', monospace; color: #555; letter-spacing: 1px; margin-top: 8px; }
 
     /*  ~~~ the moment of beauty ~~~
         a single smooth gradient in a sea of pixels.
@@ -485,8 +485,11 @@
 
 
     /* konami mode — everything goes vaporwave.
-       ↑↑↓↓←→←→BA and suddenly it's 1993 in tokyo. */
-    body.konami { filter: hue-rotate(180deg) saturate(1.5); }
+       ↑↑↓↓←→←→BA and suddenly it's 1993 in tokyo.
+       filter on a wrapper only, so the taskbar stays outside and keeps
+       correct viewport-relative fixed positioning (body filter would
+       create a new containing block and break the taskbar). */
+    body.konami .konami-wrap { filter: hue-rotate(180deg) saturate(1.5); }
     .konami-toast { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; color: #ff00ff; border: 2px solid #ff00ff; padding: 16px 32px; font: 28px 'VT323', monospace; z-index: 15000; letter-spacing: 3px; text-shadow: 0 0 8px #ff00ff, 0 0 20px #ff00ff; box-shadow: 0 0 15px rgba(255,0,255,0.4); }
     .konami-toast.on { display: block; animation: kblink 0.3s step-end infinite; }
     @keyframes kblink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0; } }
@@ -569,9 +572,9 @@
 
     .y2k-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 360px; background: #c0c0c0; border: 2px outset #ddd; z-index: 15000; font-family: 'Space Mono', monospace; }
     .y2k-popup.on { display: block; animation: popBounce .3s ease-out; }
+    .y2k-popup.floating { transform: none; }
     .y2k-bar { display: flex; align-items: center; justify-content: space-between; padding: 2px 3px; background: linear-gradient(90deg, #000080, #1084d0); color: #fff; font: 700 11px 'Space Mono', monospace; }
-    .y2k-body { display: flex; align-items: flex-start; gap: 14px; padding: 16px 16px 8px; }
-    .y2k-icon { font-size: 32px; flex-shrink: 0; line-height: 1; }
+    .y2k-body { padding: 16px 16px 8px; }
     .y2k-text { font: 12px/1.6 'Space Mono', monospace; color: #000; }
     .y2k-btns { display: flex; justify-content: center; padding: 4px 16px 14px; gap: 8px; }
     .y2k-btn { background: #c0c0c0; border: 2px outset #ddd; padding: 4px 28px; font: 11px 'Space Mono', monospace; cursor: pointer; color: #000; }
