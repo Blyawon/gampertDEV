@@ -526,6 +526,9 @@
   // 60s on desktop, 180s (3min) on mobile — people read slower on phones,
   // check notifications mid-scroll, and generally don't expect a screensaver.
   function resetIdle() { if(ssOn) hideSS(); clearTimeout(ssT); ssT=setTimeout(showSS, mobile()?180000:60000); }
+  // throttle so we don't clear/set the 60s timer on every single mousemove
+  var resetIdleLast=0, RESET_IDLE_THROTTLE=250;
+  function resetIdleThrottled(){ var now=Date.now(); if(now-resetIdleLast<RESET_IDLE_THROTTLE) return; resetIdleLast=now; resetIdle(); }
   function showSS() { ssOn=true; ss.classList.add('on'); document.title=TITLE+' — screensaver'; ssX=Math.random()*(innerWidth-200); ssY=Math.random()*(innerHeight-60); ssDx=1.5; ssDy=1; ssTxt.style.color='#00ff88'; animSS(); }
   function hideSS() { ssOn=false; ss.classList.remove('on'); document.title=TITLE; cancelAnimationFrame(ssR); }
   function animSS() {
@@ -535,7 +538,7 @@
     if(ssY<=0||ssY>=my){ssDy*=-1;ssY=Math.max(0,Math.min(ssY,my));ssTxt.style.color='#'+((Math.random()*0xffffff)|0).toString(16).padStart(6,'0');}
     ssTxt.style.left=ssX+'px'; ssTxt.style.top=ssY+'px'; ssR=requestAnimationFrame(animSS);
   }
-  ['mousemove','mousedown','keydown','scroll','touchstart'].forEach(function(e){ document.addEventListener(e,resetIdle,{passive:true}); });
+  ['mousemove','mousedown','keydown','scroll','touchstart'].forEach(function(e){ document.addEventListener(e,resetIdleThrottled,{passive:true}); });
   resetIdle();
 
   // =========================================================
