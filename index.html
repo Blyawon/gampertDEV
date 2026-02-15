@@ -126,10 +126,6 @@
   </div>
 </div>
 
-<!-- KONAMI TOAST — if you know, you know.
-     if you don't: ↑↑↓↓←→←→BA. you're welcome. -->
-<div class="konami-toast" id="kToast">CHEAT CODE ACTIVATED</div>
-
 <!-- Y2K POPUP -->
 <div class="y2k-popup" id="y2kPopup">
   <div class="y2k-bar"><span style="padding-left:4px">&#9888; Important Message</span><div class="wbtn" id="y2kX">&times;</div></div>
@@ -236,34 +232,6 @@ www.gampert.io</textarea>
   </div>
 </div>
 
-<!-- OVERLAY -->
-<div class="overlay" id="overlay"></div>
-
-<!-- START MENU -->
-<div class="start-menu" id="sm">
-  <div class="sm-side"><span>florian</span></div>
-  <div class="sm-body">
-    <div class="sm-profile">
-      <div class="sm-avatar"><svg width="22" height="22" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 86V33.1389C0 14.8655 15.3344 0 34.1841 0H86V12.1554H34.4886C22.3927 12.1554 12.5388 21.708 12.5388 33.434V85.9732H0V86Z" fill="#00ff88"/><path d="M38.0869 86V73.8446H51.8436C63.7734 73.8446 73.4612 64.453 73.4612 52.888V49.0777H38.7V36.9223H86V52.9685C86 71.1613 70.721 85.9732 51.9543 85.9732H38.0869V86Z" fill="#00ff88"/></svg></div>
-      <div><div class="sm-name">florian gampert</div><div class="sm-status">design systems, mostly</div></div>
-    </div>
-    <div class="sm-items">
-      <div class="sm-item" data-a="go" data-t="w-welcome"><span class="ico">&#9632;</span> welcome</div>
-      <div class="sm-item" data-a="go" data-t="w-projects"><span class="ico">&#9776;</span> projects</div>
-      <div class="sm-item" data-a="go" data-t="w-about"><span class="ico">&#9786;</span> about</div>
-      <div class="sm-item" data-a="go" data-t="w-links"><span class="ico">&#8599;</span> links</div>
-      <div class="sm-div"></div>
-      <div class="sm-item" data-a="url" data-href="https://www.gampert.io"><span class="ico">&#128188;</span> gampert.io</div>
-      <div class="sm-item" data-a="notepad"><span class="ico">&#9998;</span> notepad</div>
-      <div class="sm-item" data-a="source"><span class="ico">&lt;/&gt;</span> view source</div>
-      <div class="sm-item" data-a="aim"><span class="ico">&#128172;</span> messenger</div>
-      <div class="sm-div"></div>
-      <div class="sm-item" data-a="crt"><span class="ico">&#128187;</span> <span id="crtLabel">CRT mode: OFF</span></div>
-      <div class="sm-item" data-a="shutdown"><span class="ico">&#9211;</span> shut down...</div>
-    </div>
-  </div>
-</div>
-
 <!-- =====================================================
      THE DESKTOP — where the windows live
      ===================================================== -->
@@ -344,6 +312,35 @@ www.gampert.io</textarea>
   </div>
 </div>
 </div><!-- /.konami-wrap -->
+
+<!-- OVERLAY + START MENU — outside konami-wrap so position:fixed works when Konami is on -->
+<div class="overlay" id="overlay"></div>
+<div class="start-menu" id="sm">
+  <div class="sm-side"><span>florian</span></div>
+  <div class="sm-body">
+    <div class="sm-profile">
+      <div class="sm-avatar"><svg width="22" height="22" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 86V33.1389C0 14.8655 15.3344 0 34.1841 0H86V12.1554H34.4886C22.3927 12.1554 12.5388 21.708 12.5388 33.434V85.9732H0V86Z" fill="#00ff88"/><path d="M38.0869 86V73.8446H51.8436C63.7734 73.8446 73.4612 64.453 73.4612 52.888V49.0777H38.7V36.9223H86V52.9685C86 71.1613 70.721 85.9732 51.9543 85.9732H38.0869V86Z" fill="#00ff88"/></svg></div>
+      <div><div class="sm-name">florian gampert</div><div class="sm-status">design systems, mostly</div></div>
+    </div>
+    <div class="sm-items">
+      <div class="sm-item" data-a="go" data-t="w-welcome"><span class="ico">&#9632;</span> welcome</div>
+      <div class="sm-item" data-a="go" data-t="w-projects"><span class="ico">&#9776;</span> projects</div>
+      <div class="sm-item" data-a="go" data-t="w-about"><span class="ico">&#9786;</span> about</div>
+      <div class="sm-item" data-a="go" data-t="w-links"><span class="ico">&#8599;</span> links</div>
+      <div class="sm-div"></div>
+      <div class="sm-item" data-a="url" data-href="https://www.gampert.io"><span class="ico">&#128188;</span> gampert.io</div>
+      <div class="sm-item" data-a="notepad"><span class="ico">&#9998;</span> notepad</div>
+      <div class="sm-item" data-a="source"><span class="ico">&lt;/&gt;</span> view source</div>
+      <div class="sm-item" data-a="aim"><span class="ico">&#128172;</span> messenger</div>
+      <div class="sm-div"></div>
+      <div class="sm-item" data-a="crt"><span class="ico">&#128187;</span> <span id="crtLabel">CRT mode: OFF</span></div>
+      <div class="sm-item" data-a="shutdown"><span class="ico">&#9211;</span> shut down...</div>
+    </div>
+  </div>
+</div>
+
+<!-- KONAMI TOAST — if you know, you know. ↑↑↓↓←→←→BA -->
+<div class="konami-toast" id="kToast">CHEAT CODE ACTIVATED</div>
 
 <!-- TASKBAR -->
 <div class="taskbar">
