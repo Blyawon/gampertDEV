@@ -1,6 +1,7 @@
 /*  ┌──────────────────────────────────────────────┐
     │  RESET & BASE                                │
     │  the foundation. nothing fancy.              │
+    │  every masterpiece starts with * { margin:0 }│
     └──────────────────────────────────────────────┘ */
 
     /* fonts loaded via <link> in index.html for faster parallel loading.
@@ -17,7 +18,8 @@
       font: 14px/1.6 'Space Mono', monospace;
       min-height: 100vh;
       overflow-x: hidden;
-      /* custom cursor because why not */
+      /* custom cursor because the default one isn't retro enough.
+       yes, it's an SVG data URI. yes, that's unhinged. */
       cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M0 0L0 14L4 10L7 15L9 14L6 9L11 9Z' fill='white' stroke='black'/%3E%3C/svg%3E") 0 0, auto;
     }
 
@@ -139,7 +141,9 @@
 
 /*  ┌──────────────────────────────────────────────┐
     │  DESKTOP ICONS                               │
-    │  the little guys at the top                  │
+    │  the little guys at the top.                 │
+    │  double-click to open. single-click to feel  │
+    │  something. just like the real thing.         │
     └──────────────────────────────────────────────┘ */
 
     .icons { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0 16px; }
@@ -231,7 +235,8 @@
     .win-body { border-top: 2px solid #404040; }
     .win-content { padding: 16px 20px; font: 13px/1.7 'Space Mono', monospace; }
 
-    /* each window zone has its own colour world — geocities energy */
+    /* each window zone has its own colour world — geocities energy.
+       we're one animated-background-gif away from perfection. */
     .z-navy   { --bar: linear-gradient(90deg, #000080, #1084d0); }
     .z-green  { --bar: linear-gradient(90deg, #004d00, #2e8b2e); }
     .z-maroon { --bar: linear-gradient(90deg, #4a0000, #a02020); }
@@ -285,7 +290,9 @@
 
 /*  ┌──────────────────────────────────────────────┐
     │  CONTENT BITS                                │
-    │  the stuff people actually came here for     │
+    │  the stuff people actually came here for.    │
+    │  buried under 500 lines of UI chrome.        │
+    │  just like a real OS.                        │
     └──────────────────────────────────────────────┘ */
 
     .ascii  { font: 16px/1.15 monospace; white-space: pre; color: #00ff88; text-align: center; padding: 20px 10px; overflow-x: auto; }
@@ -309,7 +316,9 @@
 
     /*  ~~~ the moment of beauty ~~~
         a single smooth gradient in a sea of pixels.
-        like finding a sunset in a terminal.         */
+        like finding a sunset in a terminal.
+        3px tall. carries the emotional weight
+        of the entire website.                       */
     .moment { height: 3px; margin: 32px 0; border-radius: 2px; background: linear-gradient(90deg, #0a0a2e, #1a0044 10%, #4a0066 20%, #cc2266 35%, #ff6633 50%, #ffcc44 65%, #44ddaa 80%, #1a88cc 90%, #0a0a2e); opacity: .9; }
 
     .about a { color: #ff9966; }
@@ -475,7 +484,8 @@
     }
 
 
-    /* konami mode — everything goes vaporwave */
+    /* konami mode — everything goes vaporwave.
+       ↑↑↓↓←→←→BA and suddenly it's 1993 in tokyo. */
     body.konami { filter: hue-rotate(180deg) saturate(1.5); }
     .konami-toast { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; color: #ff00ff; border: 2px solid #ff00ff; padding: 16px 32px; font: 28px 'VT323', monospace; z-index: 15000; letter-spacing: 3px; text-shadow: 0 0 8px #ff00ff, 0 0 20px #ff00ff; box-shadow: 0 0 15px rgba(255,0,255,0.4); }
     .konami-toast.on { display: block; animation: kblink 0.3s step-end infinite; }
@@ -588,6 +598,9 @@
     │  MARQUEE TICKER                              │
     │  <marquee> is deprecated? tell that to       │
     │  every browser that still supports it.       │
+    │  W3C removed it from the spec in 2014.       │
+    │  browsers said "lol no" and kept it.         │
+    │  the people's tag.                           │
     └──────────────────────────────────────────────┘ */
 
     .ticker { font: 16px 'VT323', monospace; color: #00ff88; padding: 6px 0; letter-spacing: 1px; border-top: 1px dashed #333; border-bottom: 1px dashed #333; margin: 8px 0; margin-top: auto; display: block; }
@@ -628,8 +641,8 @@
 
 /*  ┌──────────────────────────────────────────────┐
     │  MOBILE                                      │
-    │  yes it works on phones. and now we           │
-    │  actually care about it.                     │
+    │  yes it works on phones. a retro desktop     │
+    │  OS... on a phone. the irony is not lost.    │
     │                                              │
     │  touch targets: ≥32px (44px hit area).        │
     │  taskbar: safe-area aware, correct offset.   │
@@ -639,7 +652,7 @@
     └──────────────────────────────────────────────┘ */
 
     @media (max-width: 960px) {
-      body::after { display: none; }                   /* no scanlines on mobile — saves gpu */
+      body::after { display: none; }                   /* no scanlines on mobile — nobody held a CRT in their pocket. except nokia. */
 
       /* ---- ascii art: scale hard for small screens ---- */
       .ascii { font-size: min(16px, 2.4vw); padding: 12px 0; }
@@ -659,7 +672,7 @@
       .win.mini { cursor: pointer; }
       .win.mini .win-bar { opacity: .7; }              /* hint that it's tappable */
 
-      /* ---- window controls: finger-sized (was 16×14 — criminal) ---- */
+      /* ---- window controls: finger-sized (was 16×14 — a hate crime against thumbs) ---- */
       .win-ctrls { gap: 4px; }
       .wbtn {
         width: 32px; height: 28px;

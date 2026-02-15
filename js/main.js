@@ -2,10 +2,13 @@
   'use strict';
 
   // -------- globals --------
+  // the whole app state fits in one line. take that, Redux.
   var TITLE = 'gampert.dev';
   var t0 = Date.now(), reboots = 0, sndOn = false, zTop = 20;
 
   // -------- refs --------
+  // yes, $ is jQuery muscle memory. no, jQuery is not loaded.
+  // this is 14 characters of DOM access. the framework is me.
   var $ = function(s) { return document.getElementById(s); };
   var wins   = document.querySelectorAll('.desktop .win[id]');
   var tbWins = $('tbWins');
@@ -13,6 +16,8 @@
 
   // =========================================================
   //  AUDIO — 8-bit beeps via Web Audio API. no files needed.
+  //  the entire sound design of this website is generated
+  //  from math. no .mp3s were harmed in the making of this.
   // =========================================================
   var actx;
   function au() { if (!actx) actx = new (AudioContext || webkitAudioContext)(); return actx; }
@@ -35,7 +40,8 @@
   };
 
   // =========================================================
-  //  CLOCK — dubai time
+  //  CLOCK — dubai time (GMT+4, where the future is 4 hours
+  //  closer than you think)
   // =========================================================
   function tick() {
     var n = new Date();
@@ -432,15 +438,26 @@
   };
 
   var flavors = [
+    // the classics
     'restoring questionable design choices...', 'recompiling opinions...', 'defragmenting ambition...',
     'mounting /dev/coffee...', 'loading fonts... (the important part)...', 'recovering unsaved motivation...',
     'calibrating ego... done.', 'indexing side projects... too many found.', 'searching for work-life balance... not found.',
     'rebuilding css... pray.', 'locating missing semicolons...', 'initializing procrastination engine...',
     'syncing with the void...', 'warming up cold takes...', 'compressing regrets... 41% savings.',
     'polling stackoverflow... connection strong.', 'spinning up hamster wheel...',
+    // design system crimes
     'auditing design tokens... 47 near-duplicates.', 'calculating spacing violations... delta E < 5...',
     'checking figma for detached instances... oh no.', 'normalizing border-radius... 14 unique values found.',
     'resolving merge conflicts in the design system...', 'counting z-index layers... lost count at 9999.',
+    // new material
+    'asking chatgpt for permission to use vanilla js...', 'deploying to localhost... good enough.',
+    'parsing opinions from twitter... toxicity filter engaged.', 'checking if this is still a personal site or a cry for help...',
+    'optimizing for vibes per second...', 'negotiating with the CSS cascade... it won.',
+    'downloading more RAM... just kidding.', 'running npm audit... 0 vulnerabilities (0 dependencies).',
+    'converting side projects to abandoned projects... 94% complete.', 'checking if cursor is blinking... it is. good.',
+    'verifying that divs are not sentient... inconclusive.', 'applying border-radius to my personality...',
+    'git blame: it was me. it\'s always me.', 'loading mass of unread design articles...',
+    'reticulating splines... (nobody knows what this means).', 'consulting the W3C spec... immediately regretting it.',
   ];
 
   function pick(a, n) { var s=a.slice(),i=s.length; while(i){var j=Math.random()*i--|0,t=s[i];s[i]=s[j];s[j]=t;} return s.slice(0,n); }
@@ -452,11 +469,12 @@
     document.title = TITLE+' — booting...';
     var f = pick(flavors, 3);
     var lines = [
-      {t:'GAMPERT BIOS v0.4.2',c:'bh',d:0},{t:'(build: saturday-3am-dubai)',c:'bd',d:80},{t:'',d:200},
+      {t:'GAMPERT BIOS v0.4.2',c:'bh',d:0},{t:'(build: saturday-3am-dubai, vibes: immaculate)',c:'bd',d:80},{t:'',d:200},
       {t:'CPU: mass of caffeine and opinions',d:100},{t:'RAM: enough (barely)',d:80},
+      {t:'GPU: integrated daydreams',d:80},
       {t:'DISK: 90% figma files, 10% side projects',d:80},{t:'',d:150},
-      {t:'Memory Test: 640K OK',c:'bok',d:200},{t:'Detecting hard drives... C:\\',d:300},{t:'',d:100},
-      {t:'Checking projects.......... 4 found',d:250},{t:'Checking abandoned ideas... 41 found',c:'bw',d:200},{t:'',d:100},
+      {t:'Memory Test: 640K OK',c:'bok',d:200},{t:'Vibe Test: immaculate',c:'bok',d:100},{t:'Detecting hard drives... C:\\',d:300},{t:'',d:100},
+      {t:'Checking projects.......... 4 found',d:250},{t:'Checking abandoned ideas... 41 found',c:'bw',d:200},{t:'Checking open browser tabs... 87 found',c:'bw',d:150},{t:'',d:100},
       {t:f[0],c:'bd',d:250},{t:f[1],c:'bd',d:250},{t:f[2],c:'bd',d:250},{t:'',d:100},
       {t:'Loading gampert.dev...',c:'bh',d:200},{t:'__BAR__',d:100},{t:'',d:50},{t:'READY.',c:'bok',d:300}
     ];
@@ -495,7 +513,9 @@
   }
 
   // =========================================================
-  //  SCREENSAVER — 60s idle, bouncing DVD-style
+  //  SCREENSAVER — 60s idle, bouncing DVD-style.
+  //  i've seen people watch this for 5 minutes waiting
+  //  for it to hit the corner perfectly. it does. eventually.
   // =========================================================
   var ss=$('ss'), ssTxt=$('ssTxt'), ssT, ssOn=false, ssX,ssY,ssDx,ssDy,ssR;
   // 60s on desktop, 180s (3min) on mobile — people read slower on phones,
@@ -515,6 +535,9 @@
 
   // =========================================================
   //  KONAMI CODE — ↑↑↓↓←→←→BA
+  //  the most famous cheat code in history, now used to
+  //  make a website look like a vaporwave album cover.
+  //  contra would be proud. or confused.
   // =========================================================
   // e.code = physical key name, locale-independent. e.keyCode is deprecated.
   var kSeq=['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA'], kPos=0;
@@ -523,7 +546,9 @@
   });
 
   // =========================================================
-  //  SPLASH — first visit only (per tab)
+  //  SPLASH — first visit only (per tab).
+  //  every app needs a loading screen, even if there's
+  //  nothing to load. it's about the *experience*.
   // =========================================================
   (function() {
     var sp=$('splash'),bar=$('splashFill');
@@ -539,6 +564,8 @@
   //  draws the gampert G logo on a 32×32 canvas with a CRT
   //  boot sequence, phosphor glow flicker & colour cycling.
   //  because a static .ico is so 2003.
+  //  ~120 lines of code so a 16×16 pixel square can glow.
+  //  priorities.
   // =========================================================
   (function(){
     // the animated favicon is invisible on most mobile browsers (iOS Safari
@@ -737,21 +764,54 @@
   //  appears once, ~25-40s after load. dismiss it if you dare.
   // =========================================================
   var popupMsgs = [
+    // classic bait
     'Congratulations!!! You are the 1,000,000th visitor to this website! Click OK to claim your FREE prize!',
     'WARNING: Your computer may be infected with up to 47 viruses. Click OK to scan now.',
-    'URGENT: Your gampert.dev license expires in 0 days! Renew for only $0.00!',
-    'This website uses cookies. Just kidding \u2014 it doesn\'t even have a server.',
-    'Error 418: I\'m a teapot. The requested entity body is short and stout.',
-    'Did you know? This website was built without a single npm install. Doctors hate this one weird trick.',
-    'SYSTEM ALERT: Too much style detected on this page. Reduce vibe levels immediately.',
-    'Your free trial of the internet has expired. Please insert another quarter to continue browsing.'
+    // self-aware web dev humor
+    'This website uses cookies. Just kidding \u2014 it doesn\'t even have a server. It\'s just vibes all the way down.',
+    'Did you know? This website was built without a single npm install. Your node_modules folder is crying right now.',
+    'SYSTEM ALERT: Too much style detected on this page. The CSS police have been notified. Do not resize your browser.',
+    'Error 418: I\'m a teapot. The requested entity body is short and stout. Tip me over and pour me out.',
+    // fake urgency
+    'URGENT: Your gampert.dev license expires in 0 days! Renew for only $0.00! Or don\'t. We literally can\'t stop you.',
+    'Your free trial of the internet has expired. Please insert another quarter to continue browsing. We accept Dogecoin.',
+    'CRITICAL WARNING: You have been browsing this site for too long. Your boss is behind you. Act natural.',
+    // cheeky fourth-wall breaks
+    'Hey. Yes, you. Stop inspecting the source code. I can see you. I\'m watching. Close DevTools right now.',
+    'Fun fact: every time you close this popup, a frontend developer gets their wings. You monster.',
+    'This popup was handcrafted by a human. No AI was harmed in its creation. The developer, however, may have been.',
+    'You weren\'t supposed to see this. This popup was meant for the other visitor. Please forget everything.',
+    // absurd authority
+    'NOTICE: By reading this popup, you have agreed to our Terms of Service, Privacy Policy, and a blood oath.',
+    'SECURITY ALERT: Someone from your IP address has been looking at too many cool websites. That someone is you.',
+    'WARNING: The vibe check has detected dangerously high levels of taste. Proceed with caution.',
+    // retro internet nostalgia
+    'Please wait... downloading more RAM... ... ... just kidding, that never worked and you know it.',
+    'Your Internet Explorer has encountered a fatal error. Just kidding, you\'re not using IE. ...Right?',
+    'A/S/L? Just kidding. This isn\'t AIM. Or is it? Check the taskbar.',
+    // deadpan / dry
+    'This popup serves no purpose. You clicked OK anyway. Interesting.',
+    'Congratulations! You found the popup. There is no prize. There was never a prize. Only popups.',
+    'This is a popup. It pops up. That\'s what it does. You can close it now. Or stare at it. Your call.',
+    // tech absurdism
+    'FATAL ERROR: Keyboard not found. Press F1 to continue. Press F2 to press F1.',
+    'Your screen resolution has been detected as "pretty good actually." Keep up the good work.',
+    'ALERT: This website has mass. It weighs approximately 0.000000002 grams. Handle with care.',
+    // existential dread (the funny kind)
+    'This website was deployed to a server that doesn\'t exist. You\'re looking at a static file. On GitHub Pages. For free. The future is weird.',
+    'WARNING: This site contains mass of hand-written CSS. The developer has been offered help. He declined.',
+    'NOTICE: The <marquee> tag at the bottom of this page is not ironic. It is sincere. We are not sorry.',
+    'SYSTEM CHECK: Detecting framework... none found. Detecting build tool... none found. Detecting sanity... also none found.',
+    'ALERT: Your browser just rendered HTML, CSS, and vanilla JS without a 200MB node_modules folder. The industry is in shambles.'
   ];
 
   var popupShown = false;
   setTimeout(function() {
     if (popupShown) return;
     popupShown = true;
-    $('y2kText').textContent = popupMsgs[Math.random() * popupMsgs.length | 0];
+    var popupMsg = popupMsgs[Math.random() * popupMsgs.length | 0];
+    // Keep popup body tone consistent: strip exclamation marks from content area.
+    $('y2kText').textContent = popupMsg.replace(/!/g, '');
     $('y2kPopup').classList.add('on');
     sErr();
   }, (25000 + Math.random() * 15000) | 0);
@@ -779,6 +839,8 @@
   //  every 2000s personal site had a starfield, or at least
   //  a tiled space background downloaded from some free
   //  "backgrounds for your website!!" page.
+  //  this one is procedurally generated because we have
+  //  standards now. low standards, but standards.
   // =========================================================
   (function() {
     var c = document.createElement('canvas'), x = c.getContext('2d');
@@ -810,6 +872,8 @@
 
   // =========================================================
   //  HELPERS — drag & resize utilities
+  //  the unsexy plumbing that makes the sexy stuff work.
+  //  if you're reading this part, you're a real one.
   // =========================================================
   function makeDraggable(handle, el, ignore) {
     var d=false,ox,oy;
