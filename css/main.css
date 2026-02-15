@@ -1,0 +1,816 @@
+/*  ┌──────────────────────────────────────────────┐
+    │  RESET & BASE                                │
+    │  the foundation. nothing fancy.              │
+    └──────────────────────────────────────────────┘ */
+
+    /* fonts loaded via <link> in index.html for faster parallel loading.
+       @import is serial (CSS → parse → fetch fonts). <link> lets the
+       browser discover the font request during HTML parsing. */
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      /* base background — JS replaces this with a canvas starfield.
+         keep #0a0a1e to match the starfield's base colour and prevent flash. */
+      background: #0a0a1e;
+      color: #e0e0e0;
+      font: 14px/1.6 'Space Mono', monospace;
+      min-height: 100vh;
+      overflow-x: hidden;
+      /* custom cursor because why not */
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16'%3E%3Cpath d='M0 0L0 14L4 10L7 15L9 14L6 9L11 9Z' fill='white' stroke='black'/%3E%3C/svg%3E") 0 0, auto;
+    }
+
+    /* scanlines — the CRT tax */
+    body::after {
+      content: ""; position: fixed; inset: 0;
+      background: repeating-linear-gradient(transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
+      pointer-events: none; z-index: 9999;
+    }
+
+    a { color: #00ff88; text-decoration: none; }
+    a:hover { color: #fff; background: #00ff88; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  THE SPLASH                                  │
+    │  first impressions matter, even on a          │
+    │  retro site. shows once per session.          │
+    └──────────────────────────────────────────────┘ */
+
+    .splash { display: none; position: fixed; inset: 0; background: #000; z-index: 20000; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+    .splash.on { display: flex; }
+    .splash h1 { font: 42px 'VT323', monospace; color: #00ff88; letter-spacing: 6px; }
+    .splash p  { font: 18px 'VT323', monospace; color: #555; letter-spacing: 2px; }
+    .splash-bar { width: 260px; height: 14px; background: #111; border: 1px solid #444; }
+    .splash-fill { height: 100%; width: 0%; background: #00ff88; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  TASKBAR                                     │
+    │  the grey strip at the bottom that makes     │
+    │  the whole thing feel like an OS.            │
+    └──────────────────────────────────────────────┘ */
+
+    .taskbar {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 36px;
+      background: #c0c0c0; border-top: 2px solid #fff;
+      display: flex; align-items: center; padding: 2px 4px; gap: 2px;
+      z-index: 100; font: 11px 'Space Mono', monospace; color: #000;
+    }
+
+    /* the big important button */
+    .start-btn {
+      background: #c0c0c0; padding: 2px 12px;
+      border: 2px outset #ddd;
+      font: 700 12px 'Space Mono', monospace;
+      cursor: pointer; display: flex; align-items: center; gap: 4px;
+      flex-shrink: 0; user-select: none;
+    }
+    .start-btn.on  { border-style: inset; }
+
+    .tb-div { width: 2px; height: 24px; border-left: 1px solid #808080; border-right: 1px solid #fff; margin: 0 2px; flex-shrink: 0; }
+
+    /* window buttons in the taskbar */
+    .tb-wins { display: flex; gap: 2px; overflow: hidden; flex: 1; min-width: 0; }
+    .tb-btn  {
+      background: #c0c0c0; border: 2px outset #ddd; padding: 1px 8px;
+      font: 10px 'Space Mono', monospace; cursor: pointer;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      max-width: 140px; user-select: none; flex-shrink: 0;
+    }
+    .tb-btn.in  { border-style: inset; background: #b0b0b0; }
+
+    /* system tray (clock, sound) */
+    .tray {
+      margin-left: auto; display: flex; align-items: center; gap: 2px; flex-shrink: 0;
+      border: 1px inset #ddd; padding: 2px 6px;
+    }
+    .tray-icon { font: 14px 'VT323', monospace; cursor: pointer; padding: 0 4px; user-select: none; position: relative; }
+    .tray-icon:hover { background: #d0d0d0; }
+    .tray-tip  { display: none; position: absolute; bottom: 30px; right: -10px; background: #ffffe1; border: 1px solid #000; padding: 2px 8px; font: 11px 'Space Mono', monospace; color: #000; white-space: nowrap; z-index: 200; }
+    .tray-icon:hover .tray-tip { display: block; }
+    .clock { font: 11px 'Space Mono', monospace; padding: 0 6px; cursor: default; white-space: nowrap; }
+    .clock-wrap { position: relative; }
+    .clock-wrap:hover .clock-tip { display: block; }
+    .clock-tip { display: none; position: absolute; bottom: 34px; right: 0; background: #ffffe1; border: 1px solid #000; padding: 4px 10px; font: 11px 'Space Mono', monospace; color: #000; white-space: pre-line; z-index: 200; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  START MENU                                  │
+    │  "where do you want to go today?"            │
+    │  — microsoft, 1994                           │
+    └──────────────────────────────────────────────┘ */
+
+    .start-menu { display: none; position: fixed; bottom: 38px; left: 4px; width: 240px; background: #c0c0c0; border: 2px outset #ddd; z-index: 150; font: 12px 'Space Mono', monospace; color: #000; }
+    .start-menu.on { display: block; }
+    .sm-side { position: absolute; left: 0; top: 0; bottom: 0; width: 24px; background: linear-gradient(180deg, #000080, #1084d0); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; }
+    .sm-side span { writing-mode: vertical-rl; transform: rotate(180deg); color: #c0c0c0; font-weight: 700; font-size: 13px; letter-spacing: 2px; }
+    .sm-body { margin-left: 24px; }
+    .sm-profile { padding: 10px 12px; border-bottom: 1px solid #808080; display: flex; align-items: center; gap: 10px; }
+    .sm-avatar  { width: 36px; height: 36px; background: #000; border: 1px inset #808080; display: flex; align-items: center; justify-content: center; font: 18px 'VT323', monospace; color: #00ff88; flex-shrink: 0; }
+    .sm-name { font-weight: 700; font-size: 12px; }
+    .sm-status { color: #555; font-size: 10px; }
+    .sm-items { padding: 4px 0; }
+    .sm-item  { display: flex; align-items: center; gap: 10px; padding: 6px 12px; cursor: pointer; user-select: none; }
+    .sm-item:hover { background: #000080; color: #fff; }
+    .sm-item .ico { font: 16px 'VT323', monospace; width: 18px; text-align: center; flex-shrink: 0; }
+    .sm-div { height: 1px; background: #808080; margin: 4px 12px; border-bottom: 1px solid #fff; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  RIGHT-CLICK MENU & PROPERTIES               │
+    │  because even fake OSes need a context menu   │
+    └──────────────────────────────────────────────┘ */
+
+    .ctx-menu { display: none; position: fixed; width: 180px; background: #c0c0c0; border: 2px outset #ddd; z-index: 160; font: 11px 'Space Mono', monospace; color: #000; padding: 3px 0; }
+    .ctx-menu.on { display: block; }
+    .ctx-item { padding: 4px 20px; cursor: pointer; user-select: none; }
+    .ctx-item:hover { background: #000080; color: #fff; }
+    .ctx-item.off { color: #808080; cursor: default; }
+    .ctx-item.off:hover { background: none; color: #808080; }
+    .ctx-div { height: 1px; background: #808080; margin: 3px 4px; border-bottom: 1px solid #fff; }
+
+    .props { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 280px; background: #c0c0c0; border: 2px outset #ddd; z-index: 170; font-family: 'Space Mono', monospace; }
+    .props.on { display: block; }
+    .props-bar { display: flex; align-items: center; justify-content: space-between; padding: 2px 3px; background: linear-gradient(90deg, #000080, #1084d0); color: #fff; font: 700 12px 'Space Mono', monospace; }
+    .props-body { padding: 12px; font-size: 11px; line-height: 1.8; color: #000; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  DESKTOP ICONS                               │
+    │  the little guys at the top                  │
+    └──────────────────────────────────────────────┘ */
+
+    .icons { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0 16px; }
+    .icon  { width: 72px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px; cursor: pointer; user-select: none; border: 1px solid transparent; }
+    .icon.sel { background: rgba(0,0,128,.3); border: 1px dotted #fff; }
+    .icon-img { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+    .icon-lbl { font: 9px 'Space Mono', monospace; color: #fff; text-align: center; text-shadow: 1px 1px 2px #000; word-break: break-word; line-height: 1.3; }
+    .icon.sel .icon-lbl { background: #000080; color: #fff; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  SHUTDOWN / BOOT / CRT                       │
+    │  the whole theatrical production              │
+    │  of turning a website off and on again        │
+    └──────────────────────────────────────────────┘ */
+
+    .sd-overlay { display: none; position: fixed; inset: 0; z-index: 10000; cursor: pointer; }
+    .sd-overlay.on { display: flex; align-items: center; justify-content: center; }
+    .sd-blue  { display: none; position: absolute; inset: 0; background: #0000aa; align-items: center; justify-content: center; flex-direction: column; }
+    .sd-blue.on  { display: flex; }
+    .sd-blue h2  { background: #a8a800; color: #0000aa; padding: 2px 16px; font: 22px 'VT323', monospace; letter-spacing: 2px; margin-bottom: 30px; }
+    .sd-blue p   { font: 20px 'VT323', monospace; color: #c0c0c0; text-align: center; line-height: 1.8; }
+    .sd-black { display: none; position: absolute; inset: 0; background: #000; align-items: center; justify-content: center; }
+    .sd-black.on { display: flex; }
+    .sd-black p  { font: 28px 'VT323', monospace; color: #ff8800; text-align: center; line-height: 1.6; }
+    .sd-hint  { position: absolute; bottom: 40px; font: 16px 'VT323', monospace; color: #333; animation: pulse 2s ease-in-out infinite; }
+
+    .boot { display: none; position: absolute; inset: 0; background: #000; padding: 40px; flex-direction: column; overflow: hidden; }
+    .boot.on { display: flex; }
+    .boot pre { font: 18px/1.6 'VT323', monospace; color: #c0c0c0; white-space: pre-wrap; margin: 0; flex: 1; overflow-y: auto; }
+    .bh { color: #fff; } .bok { color: #00ff88; } .bw { color: #ffcc00; } .bd { color: #555; }
+    .boot-bar { margin-top: 20px; width: 300px; height: 16px; background: #111; border: 1px solid #444; display: none; }
+    .boot-bar.on { display: block; }
+    .boot-fill { height: 100%; width: 0%; background: #c0c0c0; }
+
+    @keyframes pulse { 0%,100% { opacity: .3; } 50% { opacity: .7; } }
+    @keyframes crt { 0% { clip-path: inset(49.5% 0 49.5% 0); filter: brightness(3); } 30% { clip-path: inset(40% 0 40% 0); } 60% { clip-path: inset(15% 0 15% 0); filter: brightness(1.3); } 100% { clip-path: inset(0); filter: brightness(1); background: transparent; } }
+    .crt-on { position: fixed; inset: 0; background: #000; z-index: 9998; pointer-events: none; animation: crt .5s ease-out forwards; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  SCREENSAVER                                 │
+    │  60s idle → bouncing text, like the DVD logo │
+    │  everyone wants to see it hit the corner     │
+    └──────────────────────────────────────────────┘ */
+
+    .ss { display: none; position: fixed; inset: 0; background: #000; z-index: 11000; cursor: none; }
+    .ss.on { display: block; }
+    .ss-txt { position: absolute; font: 48px 'VT323', monospace; color: #00ff88; white-space: nowrap; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  THE DESKTOP                                 │
+    │  where the actual content lives              │
+    └──────────────────────────────────────────────┘ */
+
+    .desktop { padding: 20px; padding-bottom: 60px; max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  WINDOWS                                     │
+    │  the core UI component. each section is      │
+    │  a draggable, resizable, closable window.    │
+    │                                              │
+    │  "it's not just what it looks like and       │
+    │   feels like. design is how it works."       │
+    │                           — steve jobs       │
+    │  (i know i said jony but steve pays rent)    │
+    └──────────────────────────────────────────────┘ */
+
+    .win { margin-bottom: 24px; border: 2px outset #ddd; background: #c0c0c0; position: relative; }
+    .win.hidden   { display: none; }
+    .win.mini .win-body { display: none; }
+    .win.maxi { max-width: none; margin-left: -20px; margin-right: -20px; width: calc(100% + 40px); z-index: 10; }
+    .win.focus { z-index: 20; }
+    .win-bar  { display: flex; align-items: center; justify-content: space-between; padding: 2px 3px; color: #fff; font: 700 12px 'Space Mono', monospace; user-select: none; background: linear-gradient(90deg, #808080, #a0a0a0); }
+    .win.focus .win-bar { background: var(--bar) !important; }
+    .win-title { padding-left: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .win-ctrls { display: flex; gap: 2px; flex-shrink: 0; }
+
+    .wbtn {
+      width: 16px; height: 14px; background: #c0c0c0;
+      border: 1px outset #ddd;
+      font: 9px/14px 'Space Mono', monospace; text-align: center; color: #000;
+      cursor: pointer; user-select: none;
+    }
+    .wbtn:active { border-style: inset; }
+
+    .win-body { border-top: 2px solid #404040; }
+    .win-content { padding: 16px 20px; font: 13px/1.7 'Space Mono', monospace; }
+
+    /* each window zone has its own colour world — geocities energy */
+    .z-navy   { --bar: linear-gradient(90deg, #000080, #1084d0); }
+    .z-green  { --bar: linear-gradient(90deg, #004d00, #2e8b2e); }
+    .z-maroon { --bar: linear-gradient(90deg, #4a0000, #a02020); }
+    .z-purple { --bar: linear-gradient(90deg, #2d004a, #7b2fa0); }
+    .z-navy   .win-body { background: #0a0a2e; }
+    .z-green  .win-body { background: #0a1f0a; }
+    .z-maroon .win-body { background: #1a0808; }
+    .z-purple .win-body { background: #120020; }
+    .z-navy   .win-content { color: #c8d8e8; }
+    .z-green  .win-content { color: #a8d8a8; }
+    .z-maroon .win-content { color: #e0c0b8; }
+    .z-purple .win-content { color: #d0b8e8; }
+
+    /* resize grip — the tiny diagonal lines in the corner */
+    .grip {
+      position: absolute; bottom: 0; right: 0; width: 16px; height: 16px; cursor: nwse-resize;
+      background: linear-gradient(135deg, transparent 30%, #808080 30%, #808080 40%, transparent 40%, transparent 55%, #808080 55%, #808080 65%, transparent 65%, transparent 80%, #808080 80%, #808080 90%, transparent 90%);
+    }
+
+    /* boot stagger */
+    .win.booting { opacity: 0; transform: scale(.95); }
+    .win.boot-in { opacity: 1; transform: scale(1); transition: opacity .2s, transform .2s; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  NOTEPAD                                     │
+    │  the easter egg everyone screenshots         │
+    └──────────────────────────────────────────────┘ */
+
+    .np { display: none; position: fixed; top: 80px; left: calc(50% - 190px); width: 380px; min-height: 260px; background: #c0c0c0; border: 2px outset #ddd; z-index: 180; }
+    .np.on { display: flex; flex-direction: column; }
+    .np.min { display: none; }
+    .np-bar { display: flex; align-items: center; justify-content: space-between; padding: 2px 3px; background: linear-gradient(90deg, #000080, #1084d0); color: #fff; font: 700 12px 'Space Mono', monospace; user-select: none; cursor: move; }
+    .np-menu { padding: 2px 8px; font: 11px 'Space Mono', monospace; color: #000; border-bottom: 1px solid #808080; }
+    .np-menu span { margin-right: 16px; }
+    .np-body { position: relative; flex: 1; }
+    .np-body textarea { width: 100%; height: 100%; min-height: 200px; border: none; padding: 8px; font: 12px 'Space Mono', monospace; resize: none; outline: none; display: block; }
+    .np-grip { position: absolute; bottom: 0; right: 0; width: 16px; height: 16px; cursor: nwse-resize; background: linear-gradient(135deg, transparent 30%, #808080 30%, #808080 40%, transparent 40%, transparent 55%, #808080 55%, #808080 65%, transparent 65%, transparent 80%, #808080 80%, #808080 90%, transparent 90%); }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  SOURCE VIEWER                               │
+    │  view source, but make it ✨ in-page ✨       │
+    └──────────────────────────────────────────────┘ */
+
+    .src { display: none; position: fixed; top: 40px; left: calc(50% - 280px); width: 560px; height: 70vh; background: #c0c0c0; border: 2px outset #ddd; z-index: 185; flex-direction: column; }
+    .src.on { display: flex; }
+    .src-bar { display: flex; align-items: center; justify-content: space-between; padding: 2px 3px; background: linear-gradient(90deg, #004d00, #2e8b2e); color: #fff; font: 700 12px 'Space Mono', monospace; user-select: none; cursor: move; flex-shrink: 0; }
+    .src-body { flex: 1; overflow: auto; background: #0a1f0a; color: #00ff88; padding: 12px; font: 11px/1.5 'Space Mono', monospace; white-space: pre-wrap; word-wrap: break-word; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  CONTENT BITS                                │
+    │  the stuff people actually came here for     │
+    └──────────────────────────────────────────────┘ */
+
+    .ascii  { font: 16px/1.15 monospace; white-space: pre; color: #00ff88; text-align: center; padding: 20px 10px; overflow-x: auto; }
+    .tagline { text-align: center; font: 20px 'VT323', monospace; color: #888; margin-top: 8px; letter-spacing: 2px; }
+
+    .blink { animation: blink 1s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* project list */
+    .proj { padding: 12px 0; border-bottom: 1px dashed #333; }
+    .proj:last-child { border-bottom: none; }
+    .proj-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .proj-name { font-weight: 700; font-size: 15px; }
+    .proj-name a { color: #fff; }
+    .proj-name a:hover { color: #000; }
+    .tag { padding: 1px 6px; border: 1px solid; font: 14px 'VT323', monospace; letter-spacing: 1px; }
+    .t-live { color: #00ff88; border-color: #00ff88; }
+    .t-wip  { color: #ffcc00; border-color: #ffcc00; }
+    .proj-desc { color: #999; font-size: 12px; }
+    .proj-date { font: 11px 'VT323', monospace; color: #555; letter-spacing: 1px; }
+
+    /*  ~~~ the moment of beauty ~~~
+        a single smooth gradient in a sea of pixels.
+        like finding a sunset in a terminal.         */
+    .moment { height: 3px; margin: 32px 0; border-radius: 2px; background: linear-gradient(90deg, #0a0a2e, #1a0044 10%, #4a0066 20%, #cc2266 35%, #ff6633 50%, #ffcc44 65%, #44ddaa 80%, #1a88cc 90%, #0a0a2e); opacity: .9; }
+
+    .about a { color: #ff9966; }
+    .about a:hover { background: #ff9966; color: #000; }
+    .links { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 16px; }
+    .links li::before { content: "> "; color: #555; }
+
+    .footer { text-align: center; padding: 24px 20px 48px; font: 11px 'VT323', monospace; color: #444; letter-spacing: 1px; }
+    .counter { display: inline-block; background: #000; color: #00ff88; padding: 2px 10px; border: 1px inset #333; font-size: 16px; margin: 8px 0; }
+    .badges { margin-top: 12px; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
+    .badge  { padding: 2px 8px; font-size: 11px; border: 1px solid #555; color: #888; background: #111; }
+
+    /* overlay for closing menus */
+    .overlay { display: none; position: fixed; inset: 0; z-index: 140; }
+    .overlay.on { display: block; }
+
+/*  ┌──────────────────────────────────────────────┐
+    │  DESKTOP-ONLY: wide windows, in-flow,        │
+    │  draggable (drag pops them out to fixed).    │
+    │  below 961px windows stay responsive.        │
+    └──────────────────────────────────────────────┘ */
+
+    @media (min-width: 961px) {
+      .desktop  { min-height: calc(100vh - 36px); }
+      .win {
+        width: 960px;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        margin: 0 auto 16px;
+      }
+      .win-bar  { cursor: move; flex-shrink: 0; }
+      .win-body { overflow-y: auto; flex: 1; min-height: 0; }
+      .win.maxi { max-width: none; margin: 0; width: auto; }
+
+      /* applied by JS when a window is dragged out of flow */
+      .win.floating {
+        position: fixed;
+        max-height: calc(100vh - 60px);
+        margin: 0;
+      }
+    }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  TEXT SELECTION                               │
+    │  every zone gets its own highlight colour.   │
+    │  because default blue is for people who      │
+    │  don't inspect element.                      │
+    │                                              │
+    │  ::selection — the overlooked pseudo.         │
+    │  tiny detail. enormous vibe.                 │
+    └──────────────────────────────────────────────┘ */
+
+    /* global: CRT phosphor green */
+    ::selection {
+      background: #00ff88;
+      color: #0a0a1e;
+      text-shadow: 0 0 2px #00ff88;
+    }
+
+    /* each window zone matches its title bar gradient */
+    .z-navy   .win-content ::selection { background: #1084d0; color: #fff; text-shadow: 0 0 4px rgba(16,132,208,.6); }
+    .z-green  .win-content ::selection { background: #2e8b2e; color: #fff; text-shadow: 0 0 4px rgba(46,139,46,.6); }
+    .z-maroon .win-content ::selection { background: #a02020; color: #fff; text-shadow: 0 0 4px rgba(160,32,32,.6); }
+    .z-purple .win-content ::selection { background: #7b2fa0; color: #fff; text-shadow: 0 0 4px rgba(123,47,160,.6); }
+
+    /* notepad: classic Windows blue-on-white */
+    .np-body textarea::selection { background: #000080; color: #fff; text-shadow: none; }
+
+    /* source viewer: terminal green inverted */
+    .src-body::selection,
+    .src-body ::selection { background: #00ff88; color: #0a1f0a; text-shadow: none; }
+
+    /* start menu & context menu: stay Win95 */
+    .start-menu ::selection { background: #000080; color: #fff; text-shadow: none; }
+    .ctx-menu ::selection   { background: #000080; color: #fff; text-shadow: none; }
+
+    /* boot/shutdown: amber CRT feel */
+    .boot pre::selection    { background: #ff8800; color: #000; text-shadow: none; }
+    .sd-blue ::selection    { background: #a8a800; color: #0000aa; text-shadow: none; }
+    .sd-black ::selection   { background: #ff8800; color: #000; text-shadow: none; }
+
+    /* taskbar: subtle grey highlight to match the chrome */
+    .taskbar ::selection    { background: #000080; color: #fff; text-shadow: none; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  FOCUS STATES                                │
+    │  tab through the page and every element      │
+    │  gets a retro dotted outline. just like      │
+    │  win95 — except ours glow.                   │
+    │                                              │
+    │  :focus-visible fires on keyboard nav only,  │
+    │  not on mouse click. this is what you want   │
+    │  99% of the time — it keeps keyboard users   │
+    │  happy without annoying mouse users.         │
+    └──────────────────────────────────────────────┘ */
+
+    /* links: dotted outline + subtle phosphor glow */
+    a:focus-visible {
+      outline: 1px dotted #00ff88;
+      outline-offset: 2px;
+      background: rgba(0,255,136,.1);
+    }
+    .about a:focus-visible {
+      outline-color: #ff9966;
+      background: rgba(255,153,102,.1);
+    }
+
+    /* window control buttons — tight dotted box, classic Win95 */
+    .wbtn:focus-visible {
+      outline: 1px dotted #000;
+      outline-offset: -2px;
+    }
+
+    /* start button & taskbar buttons */
+    .start-btn:focus-visible,
+    .tb-btn:focus-visible {
+      outline: 1px dotted #000;
+      outline-offset: -3px;
+    }
+
+    /* start menu items */
+    .sm-item:focus-visible {
+      background: #000080;
+      color: #fff;
+      outline: 1px dotted #fff;
+      outline-offset: -2px;
+    }
+
+    /* context menu items */
+    .ctx-item:focus-visible {
+      background: #000080;
+      color: #fff;
+      outline: 1px dotted #fff;
+      outline-offset: -2px;
+    }
+
+    /* desktop icons — dotted border with selection bg */
+    .icon:focus-visible {
+      background: rgba(0,0,128,.3);
+      border: 1px dotted #fff;
+      outline: none;
+    }
+
+    /* notepad textarea — Win95 inset glow */
+    .np-body textarea:focus-visible {
+      box-shadow: inset 0 0 0 2px #000080, inset 0 0 8px rgba(0,0,128,.3);
+      outline: none;
+    }
+
+    /* source viewer body when focused */
+    .src-body:focus-visible {
+      box-shadow: inset 0 0 0 2px #2e8b2e, inset 0 0 12px rgba(0,255,136,.15);
+      outline: none;
+    }
+
+    /* generic focus fallback — anything we missed */
+    :focus-visible {
+      outline: 1px dotted #00ff88;
+      outline-offset: 1px;
+    }
+
+
+    /* konami mode — everything goes vaporwave */
+    body.konami { filter: hue-rotate(180deg) saturate(1.5); }
+    .konami-toast { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; color: #ff00ff; border: 2px solid #ff00ff; padding: 16px 32px; font: 28px 'VT323', monospace; z-index: 15000; letter-spacing: 3px; text-shadow: 0 0 8px #ff00ff, 0 0 20px #ff00ff; box-shadow: 0 0 15px rgba(255,0,255,0.4); }
+    .konami-toast.on { display: block; animation: kblink 0.3s step-end infinite; }
+    @keyframes kblink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0; } }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  CURSOR TRAIL                                │
+    │  the most 90s thing on the internet.         │
+    │  little green squares that follow your       │
+    │  cursor like lost puppies. everyone had      │
+    │  one on their geocities page. mandatory.     │
+    └──────────────────────────────────────────────┘ */
+
+    .trail {
+      position: fixed;
+      width: 3px; height: 3px;
+      background: #00ff88;
+      pointer-events: none;
+      z-index: 9997;
+    }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  DESKTOP DRAG-SELECT                         │
+    │  the rubber-band rectangle from windows 95.  │
+    │  click and drag on the desktop to select     │
+    │  icons, just like the real thing.            │
+    └──────────────────────────────────────────────┘ */
+
+    .sel-rect {
+      position: fixed;
+      border: 1px dotted rgba(200,200,255,.7);
+      background: rgba(0,0,128,.12);
+      pointer-events: none;
+      z-index: 30;
+      display: none;
+    }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  WAIT CURSOR                                 │
+    │  the hourglass. the universal sign of        │
+    │  "something is happening, probably."         │
+    │  with green sand because branding matters.   │
+    └──────────────────────────────────────────────┘ */
+
+    body.wait,
+    body.wait * {
+      cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='16'%3E%3Crect x='0' y='0' width='12' height='2' fill='%23fff'/%3E%3Cpolygon points='1,2 11,2 6,7' fill='%23808080'/%3E%3Crect x='5' y='7' width='2' height='2' fill='%23c0c0c0'/%3E%3Cpolygon points='1,14 11,14 6,9' fill='%2300ff88'/%3E%3Crect x='0' y='14' width='12' height='2' fill='%23fff'/%3E%3C/svg%3E") 6 8, wait !important;
+    }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  AIM MESSENGER                               │
+    │  remember away messages? remember             │
+    │  SmarterChild? good times.                   │
+    └──────────────────────────────────────────────┘ */
+
+    .aim { display: none; position: fixed; top: 60px; right: calc(50% - 180px); width: 360px; background: #c0c0c0; border: 2px outset #ddd; z-index: 190; font-family: 'Space Mono', monospace; }
+    .aim.on { display: flex; flex-direction: column; }
+    .aim.min { display: none; }
+    .aim-bar { display: flex; align-items: center; justify-content: space-between; padding: 2px 3px; background: linear-gradient(90deg, #ff9900, #ffcc00); color: #000; font: 700 11px 'Space Mono', monospace; user-select: none; cursor: move; }
+    .aim-body { display: flex; flex-direction: column; }
+    .aim-chat { padding: 8px; background: #fff; margin: 6px; font-size: 11px; line-height: 1.7; color: #000; overflow-y: auto; max-height: 220px; border: 2px inset #808080; }
+    .aim-msg { margin-bottom: 6px; }
+    .aim-buddy { color: #cc0000; font-weight: 700; }
+    .aim-you { color: #0000cc; font-weight: 700; }
+    .aim-away { margin-top: 8px; padding: 8px; background: #ffffcc; border: 1px dashed #cc9900; font-style: italic; text-align: center; color: #666; }
+    .aim-input { display: flex; gap: 4px; padding: 4px 6px 6px; }
+    .aim-input input { flex: 1; border: 2px inset #808080; padding: 2px 6px; font: 11px 'Space Mono', monospace; background: #e0e0e0; color: #808080; }
+    .aim-send { background: #c0c0c0; border: 2px outset #ddd; padding: 2px 12px; font: 11px 'Space Mono', monospace; cursor: default; color: #808080; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  Y2K POPUP                                   │
+    │  "you are the 1,000,000th visitor!"          │
+    │  close it and another one appears.           │
+    │  just kidding. maybe.                        │
+    └──────────────────────────────────────────────┘ */
+
+    .y2k-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 360px; background: #c0c0c0; border: 2px outset #ddd; z-index: 15000; font-family: 'Space Mono', monospace; }
+    .y2k-popup.on { display: block; animation: popBounce .3s ease-out; }
+    .y2k-bar { display: flex; align-items: center; justify-content: space-between; padding: 2px 3px; background: linear-gradient(90deg, #000080, #1084d0); color: #fff; font: 700 11px 'Space Mono', monospace; }
+    .y2k-body { display: flex; align-items: flex-start; gap: 14px; padding: 16px 16px 8px; }
+    .y2k-icon { font-size: 32px; flex-shrink: 0; line-height: 1; }
+    .y2k-text { font: 12px/1.6 'Space Mono', monospace; color: #000; }
+    .y2k-btns { display: flex; justify-content: center; padding: 4px 16px 14px; gap: 8px; }
+    .y2k-btn { background: #c0c0c0; border: 2px outset #ddd; padding: 4px 28px; font: 11px 'Space Mono', monospace; cursor: pointer; color: #000; }
+    .y2k-btn:active { border-style: inset; }
+    @keyframes popBounce { 0% { transform: translate(-50%,-50%) scale(.8); opacity: 0; } 100% { transform: translate(-50%,-50%) scale(1); opacity: 1; } }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  LOADING DIALOG                              │
+    │  the chunky progress bar that makes you      │
+    │  feel like something important is happening   │
+    └──────────────────────────────────────────────┘ */
+
+    .ld { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 320px; background: #c0c0c0; border: 2px outset #ddd; z-index: 200; font-family: 'Space Mono', monospace; }
+    .ld.on { display: block; }
+    .ld-bar { padding: 2px 6px; background: linear-gradient(90deg, #000080, #1084d0); color: #fff; font: 700 11px 'Space Mono', monospace; }
+    .ld-body { padding: 16px; }
+    .ld-text { font: 11px 'Space Mono', monospace; color: #000; margin-bottom: 12px; }
+    .ld-track { width: 100%; height: 18px; background: #fff; border: 2px inset #808080; }
+    .ld-fill { height: 100%; width: 0%; background: repeating-linear-gradient(90deg, #000080 0, #000080 10px, #c0c0c0 10px, #c0c0c0 12px); }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  MARQUEE TICKER                              │
+    │  <marquee> is deprecated? tell that to       │
+    │  every browser that still supports it.       │
+    └──────────────────────────────────────────────┘ */
+
+    .ticker { font: 16px 'VT323', monospace; color: #00ff88; padding: 6px 0; letter-spacing: 1px; border-top: 1px dashed #333; border-bottom: 1px dashed #333; margin: 8px 0; margin-top: auto; display: block; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  LAST UPDATED                                │
+    │  because every 2000s site told you when      │
+    │  it was last touched. verbosely.             │
+    └──────────────────────────────────────────────┘ */
+
+    .last-updated { margin-top: 12px; font: 11px 'VT323', monospace; color: #555; letter-spacing: 1px; }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  CRT MODE                                    │
+    │  toggle from the start menu. heavier         │
+    │  scanlines, vignette, flicker. the works.    │
+    │  for when you really want to feel the        │
+    │  burn of a 15" CRT monitor.                  │
+    └──────────────────────────────────────────────┘ */
+
+    body.crt-mode::after {
+      background: repeating-linear-gradient(transparent, transparent 1px, rgba(0,0,0,.18) 1px, rgba(0,0,0,.18) 2px) !important;
+      animation: crtFlick .08s infinite alternate !important;
+      display: block !important;
+    }
+    body.crt-mode::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.55) 100%);
+      pointer-events: none;
+      z-index: 9998;
+    }
+    @keyframes crtFlick { from { opacity: .94; } to { opacity: 1; } }
+
+
+/*  ┌──────────────────────────────────────────────┐
+    │  MOBILE                                      │
+    │  yes it works on phones. and now we           │
+    │  actually care about it.                     │
+    │                                              │
+    │  touch targets: ≥32px (44px hit area).        │
+    │  taskbar: safe-area aware, correct offset.   │
+    │  icons: single tap to open (see JS).         │
+    │  readability: monospace needs room.           │
+    │  nav: taskbar pills stay visible.            │
+    └──────────────────────────────────────────────┘ */
+
+    @media (max-width: 960px) {
+      body::after { display: none; }                   /* no scanlines on mobile — saves gpu */
+
+      /* ---- ascii art: scale hard for small screens ---- */
+      .ascii { font-size: min(16px, 2.4vw); padding: 12px 0; }
+
+      /* ---- desktop: clear the two-row taskbar + safe area ---- *
+       * taskbar is now ~67px tall (task row + system row + padding).
+       * add 13px breathing room → 80px. safe area on top for notched phones. */
+      .desktop {
+        padding: 10px;
+        padding-bottom: 80px;
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+      }
+
+      /* ---- windows: readable on small screens ---- */
+      .win-content { padding: 12px 14px; font-size: 14px; }
+      .win.maxi { margin-left: -10px; margin-right: -10px; width: calc(100% + 20px); }
+      .win.mini { cursor: pointer; }
+      .win.mini .win-bar { opacity: .7; }              /* hint that it's tappable */
+
+      /* ---- window controls: finger-sized (was 16×14 — criminal) ---- */
+      .win-ctrls { gap: 4px; }
+      .wbtn {
+        width: 32px; height: 28px;
+        font-size: 14px; line-height: 28px;
+      }
+
+      /* ---- taskbar: two-row layout ---- *
+       * this is the big one. on desktop, the taskbar is a single row with
+       * start, window buttons, and tray all sharing one strip. on mobile
+       * that strips falls apart — 375px minus start and tray leaves ~190px
+       * for window tabs. useless.
+       *
+       * solution: flex-wrap. the task row (tb-wins) gets order:-1 and
+       * flex-basis:100%, so it wraps onto its own full-width row ABOVE
+       * the start+tray row. this mirrors how Win95 expanded its taskbar
+       * vertically when it got full. same energy, better execution.
+       *
+       * layout:
+       * ┌─────────────────────────────────────┐
+       * │ welcome │ projects │ about │ links   │  ← task row (full width)
+       * ├─────────────────────────────────────┤
+       * │ ■ start              │   🔊  4:20 PM│  ← system row
+       * └─────────────────────────────────────┘
+       *          + safe-area-inset-bottom                                  */
+      .taskbar {
+        height: auto;
+        flex-wrap: wrap;
+        padding: 2px 4px;
+        padding-bottom: calc(2px + env(safe-area-inset-bottom, 0px));
+      }
+
+      /* task row: window tabs take the full top row */
+      .tb-wins {
+        order: -1;
+        flex-basis: 100%;
+        gap: 2px;
+        padding: 2px 0;
+        border-bottom: 1px solid #808080;
+        box-shadow: 0 1px 0 #fff;
+        margin-bottom: 2px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .tb-wins::-webkit-scrollbar { display: none; }
+
+      /* tabs: fill width evenly, same height as start button.
+         flex:1 distributes them equally across the full row.
+         with 4 windows on a 375px screen that's ~90px each — plenty. */
+      .tb-btn {
+        flex: 1;
+        min-width: 0;
+        max-width: none;
+        padding: 2px 6px;
+        font-size: 10px;
+        min-height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+      .tb-div { display: none; }
+
+      /* system row: start + tray, same height as tabs */
+      .start-btn { padding: 4px 12px; font-size: 13px; min-height: 28px; }
+      .tray { padding: 2px 8px; gap: 6px; }
+      .tray-icon {
+        padding: 4px 6px; font-size: 16px;
+        min-width: 32px; min-height: 28px;
+        display: flex; align-items: center; justify-content: center;
+      }
+      .clock { font-size: 12px; padding: 0 4px; }
+
+      /* ---- start menu: full-width, roomy items ---- */
+      .start-menu {
+        left: 0; right: 0; width: 100%;
+        bottom: 68px;                                  /* fallback: matches two-row taskbar */
+        bottom: calc(68px + env(safe-area-inset-bottom, 0px));
+        border-left: none; border-right: none;
+        max-height: 60vh; overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .sm-item { padding: 12px 16px; font-size: 14px; min-height: 44px; }
+      .sm-item .ico { font-size: 20px; width: 24px; }
+      .sm-profile { padding: 14px 16px; }
+
+      /* ---- content readability: monospace needs room ---- */
+      .proj-desc { font-size: 13px; }
+      .proj-date { font-size: 13px; }
+      .proj-name { font-size: 16px; }
+      .tag { font-size: 15px; }
+
+      /* ---- boot sequence ---- */
+      .boot { padding: 20px; }
+      .boot pre { font-size: 14px; }
+      .boot-bar { width: 100%; max-width: 280px; }
+
+      /* ---- desktop icons: 2 rows of 3 ---- *
+       * CSS grid forces exactly 3 columns. with 6 icons that's 2 clean rows.
+       * each icon centres itself in its cell (the base flex-direction:column
+       * + align-items:center on .icon handles that). width:auto lets the
+       * grid column define the size instead of a fixed 72px.               */
+      .icons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        padding: 10px 0 16px;
+      }
+      .icon { width: auto; padding: 8px 4px; }
+
+      /* ---- notepad: viewport-aware, keyboard-safe ---- *
+       * position:fixed + virtual keyboard = pain on iOS.
+       * dvh (dynamic viewport height) shrinks when the keyboard opens,
+       * so max-height adjusts automatically on modern browsers.
+       * the vh fallback keeps older browsers from exploding.              */
+      .np {
+        width: 92vw; left: 4vw; top: 10px;
+        max-height: calc(100vh - 70px);
+        max-height: calc(100dvh - 70px);
+      }
+      .np-body textarea { min-height: 140px; }
+      .grip, .np-grip { display: none; }               /* no resize on touch */
+
+      /* ---- source viewer ---- */
+      .src {
+        width: 95vw; left: 2.5vw; top: 40px;
+        height: 70vh;
+        height: 70dvh;
+      }
+
+      /* ---- properties dialog: don't overflow narrow screens ---- */
+      .props { max-width: calc(100vw - 32px); }
+
+      /* ---- screensaver ---- */
+      .ss-txt { font-size: 28px; }
+
+      /* ---- no cursor stuff on touch ---- */
+      .trail { display: none; }
+
+      /* ---- new features: mobile overrides ---- */
+      .aim { width: 90vw; right: auto; left: 5vw; top: 60px; }
+      .y2k-popup { width: 85vw; max-width: 340px; }
+      .ld { width: 85vw; max-width: 300px; }
+      .ticker { font-size: 14px; }
+    }
+
+    /* ---- small phones: tighter ascii, slightly smaller controls ---- */
+    @media (max-width: 480px) {
+      .ascii { font-size: 2vw; }
+    }
+    @media (max-width: 360px) {
+      .ascii { font-size: 1.8vw; }
+      .wbtn { width: 28px; height: 26px; font-size: 13px; line-height: 26px; }
+    }

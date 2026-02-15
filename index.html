@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>gampert.dev</title>
+  <meta name="description" content="personal site of florian gampert — design systems, side projects, and a love letter to the early internet. no frameworks, no build step, no regrets.">
+  <!-- open graph: what shows up when someone shares this on social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="gampert.dev">
+  <meta property="og:description" content="design systems, side projects, and a love letter to the early internet.">
+  <meta property="og:url" content="https://gampert.dev">
+  <!-- twitter card -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="gampert.dev">
+  <meta name="twitter:description" content="design systems, side projects, and a love letter to the early internet.">
+  <!-- canonical URL -->
+  <link rel="canonical" href="https://gampert.dev">
+  <!--
+
+    ╔═══════════════════════════════════════════════════════════════╗
+    ║                                                               ║
+    ║     ██████   █████  ███    ███ ██████  ███████ ██████  ████████║
+    ║    ██       ██   ██ ████  ████ ██   ██ ██      ██   ██    ██  ║
+    ║    ██   ███ ███████ ██ ████ ██ ██████  █████   ██████     ██  ║
+    ║    ██    ██ ██   ██ ██  ██  ██ ██      ██      ██   ██    ██  ║
+    ║     ██████  ██   ██ ██      ██ ██      ███████ ██   ██    ██  ║
+    ║                                                               ║
+    ║                     gampert.dev — v0.4.2                       ║
+    ║                                                               ║
+    ╚═══════════════════════════════════════════════════════════════╝
+
+    "true simplicity is derived from so much more than
+     just the absence of clutter and ornamentation.
+     it's about bringing order to complexity."
+                                          — jony ive
+
+    he said that about aluminium rectangles, but i think
+    it applies to html too.
+
+
+    built by hand in 2025, somewhere in dubai.
+    no frameworks, no build step, no node_modules.
+    just a guy, a text editor, and questionable
+    judgement about how much javascript is "vanilla".
+
+    if you're reading this you're my kind of person.
+    say hi: florian@gampert.io
+
+
+         ,,,
+        (o o)
+    ooO--(_)--Ooo--
+    |  THANK YOU  |
+    |  FOR VIEWING |
+    |   SOURCE    |
+    ooOoooooooOoo
+
+  -->
+  <!-- favicon: static SVG fallback, JS takes over with animation -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 86 86'%3E%3Crect width='86' height='86' fill='%230a0a1e'/%3E%3Cpath d='M0 86V33.14C0 14.87 15.33 0 34.18 0H86V12.16H34.49C22.39 12.16 12.54 21.71 12.54 33.43V85.97H0Z' fill='%2300ff88'/%3E%3Cpath d='M38.09 86V73.84H51.84C63.77 73.84 73.46 64.45 73.46 52.89V49.08H38.7V36.92H86V52.97C86 71.16 70.72 85.97 51.95 85.97H38.09Z' fill='%2300ff88'/%3E%3C/svg%3E">
+  <!-- fonts: preconnect + link beats @import. browser discovers these
+       during HTML parsing instead of waiting for CSS to download first. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=VT323&family=Space+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+
+<!--
+     ╭─────────────────────────────────────────────╮
+     │  here begins the body.                      │
+     │  or as i call it: the content.              │
+     │  yes i named my css classes short.          │
+     │  no i will not apologise.                   │
+     │                                             │
+     │       (\__/)                                │
+     │       (•ㅅ•)   "ship it"                    │
+     │      ノ( uu)                                 │
+     ╰─────────────────────────────────────────────╯
+-->
+
+<body>
+
+<noscript>
+  <style>.splash{display:none!important}.desktop{display:block!important}</style>
+  <div style="max-width:700px;margin:40px auto;padding:20px;font-family:monospace;color:#e0e0e0">
+    <h1 style="color:#00ff88;font-size:28px;margin-bottom:16px">gampert.dev</h1>
+    <p>this site runs on vanilla javascript. enable it for the full retro experience — draggable windows, screensaver, konami code, the works.</p>
+    <p style="margin-top:16px"><a href="https://www.gampert.io" style="color:#00ff88">gampert.io</a> · <a href="mailto:florian@gampert.io" style="color:#00ff88">florian@gampert.io</a></p>
+  </div>
+</noscript>
+
+<!-- SPLASH -->
+<div class="splash on" id="splash">
+  <h1>GAMPERT</h1>
+  <p>welcome to gampert.dev</p>
+  <div class="splash-bar"><div class="splash-fill" id="splashFill"></div></div>
+</div>
+
+<!-- SCREENSAVER -->
+<div class="ss" id="ss"><div class="ss-txt" id="ssTxt">GAMPERT</div></div>
+
+<!-- SHUTDOWN -->
+<div class="sd-overlay" id="sdOverlay">
+  <div class="sd-blue" id="sdBlue">
+    <h2>gampert.dev</h2>
+    <p>gampert.exe has stopped vibing...<br><br>deploying to /dev/null...<br>please hold...</p>
+  </div>
+  <div class="sd-black" id="sdBlack">
+    <p>It is now safe to<br>touch grass.</p>
+    <span class="sd-hint">click anywhere to reboot</span>
+  </div>
+  <div class="boot" id="boot">
+    <pre id="bootTxt"></pre>
+    <div class="boot-bar"><div class="boot-fill" id="bootFill"></div></div>
+  </div>
+</div>
+
+<!-- KONAMI TOAST -->
+<div class="konami-toast" id="kToast">CHEAT CODE ACTIVATED</div>
+
+<!-- Y2K POPUP -->
+<div class="y2k-popup" id="y2kPopup">
+  <div class="y2k-bar"><span style="padding-left:4px">&#9888; Important Message</span><div class="wbtn" id="y2kX">&times;</div></div>
+  <div class="y2k-body">
+    <div class="y2k-icon">&#9888;</div>
+    <div class="y2k-text" id="y2kText"></div>
+  </div>
+  <div class="y2k-btns"><div class="y2k-btn" id="y2kOk">OK</div></div>
+</div>
+
+<!-- LOADING DIALOG -->
+<div class="ld" id="loadDlg">
+  <div class="ld-bar"><span style="padding-left:4px" id="ldTitle">Opening...</span></div>
+  <div class="ld-body">
+    <div class="ld-text" id="ldText">Loading...</div>
+    <div class="ld-track"><div class="ld-fill" id="ldFill"></div></div>
+  </div>
+</div>
+
+<!-- CONTEXT MENU -->
+<div class="ctx-menu" id="ctxMenu">
+  <div class="ctx-item" data-a="refresh">Refresh</div>
+  <div class="ctx-item off">Arrange Icons</div>
+  <div class="ctx-item off">New Folder</div>
+  <div class="ctx-div"></div>
+  <div class="ctx-item" data-a="props">Properties</div>
+</div>
+
+<!-- PROPERTIES -->
+<div class="props" id="propsWin">
+  <div class="props-bar"><span style="padding-left:4px">Desktop Properties</span><div class="wbtn" id="propsX">&times;</div></div>
+  <div class="props-body" id="propsBody"></div>
+</div>
+
+<!-- NOTEPAD -->
+<div class="np" id="np">
+  <div class="np-bar" id="npBar">
+    <span style="padding-left:4px">untitled - Notepad</span>
+    <div style="display:flex;gap:2px"><div class="wbtn" id="npMin">_</div><div class="wbtn" id="npX">&times;</div></div>
+  </div>
+  <div class="np-menu"><span style="text-decoration:underline">File</span><span>Edit</span><span>Help</span></div>
+  <div class="np-body">
+    <textarea id="npTxt">dear visitor,
+
+thanks for poking around. most people
+don't open the notepad. you did. that
+says something about you.
+
+this website is a love letter to the
+internet i grew up with. the one where
+every site was handmade, every page had
+a hit counter, and "view source" was
+how you learned to code.
+
+i built my first site at 12 in microsoft
+frontpage. i remember the feeling — that
+a thing i made was just... out there. on
+the internet. for anyone. that feeling
+never really went away.
+
+today i build design systems for a living.
+structure, tokens, components, process.
+it's serious work. but this site is the
+opposite. this is just for fun.
+
+if you made it this far, i'd love to
+hear from you.
+
+cheers,
+flo
+
+florian@gampert.io
+www.gampert.io</textarea>
+    <div class="np-grip" id="npGrip"></div>
+  </div>
+</div>
+
+<!-- SOURCE VIEWER -->
+<div class="src" id="srcWin">
+  <div class="src-bar" id="srcBar">
+    <span style="padding-left:4px">gampert.dev — source</span>
+    <div class="wbtn" id="srcX">&times;</div>
+  </div>
+  <div class="src-body" id="srcBody"></div>
+</div>
+
+<!-- AIM MESSENGER -->
+<div class="aim" id="aim">
+  <div class="aim-bar" id="aimBar">
+    <span style="padding-left:4px">floG4mpert - Instant Message</span>
+    <div style="display:flex;gap:2px"><div class="wbtn" id="aimMin">_</div><div class="wbtn" id="aimX">&times;</div></div>
+  </div>
+  <div class="aim-body">
+    <div class="aim-chat" id="aimChat">
+      <div class="aim-msg"><span class="aim-buddy">SmarterChild:</span> Hi! I'm SmarterChild. What do you want to talk about?</div>
+      <div class="aim-msg"><span class="aim-you">floG4mpert:</span> what's the meaning of life</div>
+      <div class="aim-msg"><span class="aim-buddy">SmarterChild:</span> I think it's about making cool websites and ignoring your responsibilities.</div>
+      <div class="aim-msg"><span class="aim-you">floG4mpert:</span> fair enough</div>
+      <div class="aim-msg aim-away">~*~ away message ~*~<br>brb making my geocities page<br>&#9835; linkin park - in the end &#9835;</div>
+    </div>
+    <div class="aim-input">
+      <input type="text" placeholder="type a message..." id="aimInput" disabled>
+      <div class="aim-send">Send</div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay"></div>
+
+<!-- START MENU -->
+<div class="start-menu" id="sm">
+  <div class="sm-side"><span>florian</span></div>
+  <div class="sm-body">
+    <div class="sm-profile">
+      <div class="sm-avatar"><svg width="22" height="22" viewBox="0 0 86 86" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 86V33.1389C0 14.8655 15.3344 0 34.1841 0H86V12.1554H34.4886C22.3927 12.1554 12.5388 21.708 12.5388 33.434V85.9732H0V86Z" fill="#00ff88"/><path d="M38.0869 86V73.8446H51.8436C63.7734 73.8446 73.4612 64.453 73.4612 52.888V49.0777H38.7V36.9223H86V52.9685C86 71.1613 70.721 85.9732 51.9543 85.9732H38.0869V86Z" fill="#00ff88"/></svg></div>
+      <div><div class="sm-name">florian gampert</div><div class="sm-status">design systems, mostly</div></div>
+    </div>
+    <div class="sm-items">
+      <div class="sm-item" data-a="go" data-t="w-welcome"><span class="ico">&#9632;</span> welcome</div>
+      <div class="sm-item" data-a="go" data-t="w-projects"><span class="ico">&#9776;</span> projects</div>
+      <div class="sm-item" data-a="go" data-t="w-about"><span class="ico">&#9786;</span> about</div>
+      <div class="sm-item" data-a="go" data-t="w-links"><span class="ico">&#8599;</span> links</div>
+      <div class="sm-div"></div>
+      <div class="sm-item" data-a="url" data-href="https://www.gampert.io"><span class="ico">&#128188;</span> gampert.io</div>
+      <div class="sm-item" data-a="notepad"><span class="ico">&#9998;</span> notepad</div>
+      <div class="sm-item" data-a="source"><span class="ico">&lt;/&gt;</span> view source</div>
+      <div class="sm-item" data-a="aim"><span class="ico">&#128172;</span> messenger</div>
+      <div class="sm-div"></div>
+      <div class="sm-item" data-a="crt"><span class="ico">&#128187;</span> <span id="crtLabel">CRT mode: OFF</span></div>
+      <div class="sm-item" data-a="shutdown"><span class="ico">&#9211;</span> shut down...</div>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================
+     THE DESKTOP — where the windows live
+     ===================================================== -->
+<div class="desktop" id="desktop">
+
+  <!-- ICONS -->
+  <div class="icons" id="icons">
+    <div class="icon" data-go="w-projects"><div class="icon-img">&#128193;</div><div class="icon-lbl">My Projects</div></div>
+    <div class="icon" data-go="w-about"><div class="icon-img">&#128100;</div><div class="icon-lbl">About</div></div>
+    <div class="icon" data-go="w-links"><div class="icon-img">&#127760;</div><div class="icon-lbl">Links</div></div>
+    <div class="icon" data-go="url:https://www.gampert.io"><div class="icon-img">&#128188;</div><div class="icon-lbl">gampert.io</div></div>
+    <div class="icon" data-go="notepad"><div class="icon-img">&#128221;</div><div class="icon-lbl">Notepad</div></div>
+    <div class="icon" data-go="source"><div class="icon-img">&#128196;</div><div class="icon-lbl">Source</div></div>
+    <div class="icon" data-go="aim"><div class="icon-img">&#128172;</div><div class="icon-lbl">Messenger</div></div>
+  </div>
+
+  <!-- WELCOME -->
+  <div class="win z-navy focus" id="w-welcome" data-title="welcome.txt" style="--bar:linear-gradient(90deg,#000080,#1084d0)">
+    <div class="win-bar"><span class="win-title">gampert.dev — welcome.txt</span><div class="win-ctrls"><span class="wbtn" data-a="min">_</span><span class="wbtn" data-a="max">&#9633;</span><span class="wbtn" data-a="close">&#215;</span></div></div>
+    <div class="win-body"><div class="win-content">
+      <div class="ascii">
+ ██████   █████  ███    ███ ██████  ███████ ██████  ████████
+██       ██   ██ ████  ████ ██   ██ ██      ██   ██    ██
+██   ███ ███████ ██ ████ ██ ██████  █████   ██████     ██
+██    ██ ██   ██ ██  ██  ██ ██      ██      ██   ██    ██
+ ██████  ██   ██ ██      ██ ██      ███████ ██   ██    ██
+      </div>
+      <div class="tagline">projects &amp; tools<span class="blink">_</span></div>
+    </div></div>
+    <div class="grip"></div>
+  </div>
+
+  <div class="moment"></div>
+
+  <!-- PROJECTS -->
+  <div class="win z-green" id="w-projects" data-title="projects" style="--bar:linear-gradient(90deg,#004d00,#2e8b2e)">
+    <div class="win-bar"><span class="win-title">C:\projects\ — 4 item(s)</span><div class="win-ctrls"><span class="wbtn" data-a="min">_</span><span class="wbtn" data-a="max">&#9633;</span><span class="wbtn" data-a="close">&#215;</span></div></div>
+    <div class="win-body"><div class="win-content">
+      <div class="proj"><div class="proj-h"><span class="proj-name"><a href="https://usermood.ai" target="_blank" rel="noopener">usermood.ai</a></span><span class="tag t-wip">WIP</span></div><div class="proj-desc">emotion-based usertesting. detects what users actually feel through facial expressions. like a lie detector for your UI.</div><div class="proj-date">last updated: 2025-02-10</div></div>
+      <div class="proj"><div class="proj-h"><span class="proj-name"><a href="https://designlens-sable.vercel.app/" target="_blank" rel="noopener">designlens</a></span><span class="tag t-live">LIVE</span></div><div class="proj-desc">paste a URL, get your design system's dirty laundry. colour sprawl, spacing violations, typography chaos, rogue z-indexes. built in a weekend.</div><div class="proj-date">last updated: 2025-02-08</div></div>
+      <div class="proj"><div class="proj-h"><span class="proj-name"><a href="https://www.figma.com/community/plugin/1593997407167524322/preflight" target="_blank" rel="noopener">preflight</a></span><span class="tag t-live">LIVE</span></div><div class="proj-desc">figma plugin. the checklist before you ship. catches the stuff you forgot at 2am.</div><div class="proj-date">figma community plugin</div></div>
+      <div class="proj"><div class="proj-h"><span class="proj-name"><a href="https://www.figma.com/community/plugin/1603340341867150929/polypaste-stress-test-your-designs-in-any-language" target="_blank" rel="noopener">polypaste</a></span><span class="tag t-live">LIVE</span></div><div class="proj-desc">figma plugin. stress-test your designs in any language. because "lorem ipsum" never broke a layout but japanese sure will.</div><div class="proj-date">figma community plugin</div></div>
+    </div></div>
+    <div class="grip"></div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="win z-maroon" id="w-about" data-title="about.exe" style="--bar:linear-gradient(90deg,#4a0000,#a02020)">
+    <div class="win-bar"><span class="win-title">about.exe</span><div class="win-ctrls"><span class="wbtn" data-a="min">_</span><span class="wbtn" data-a="max">&#9633;</span><span class="wbtn" data-a="close">&#215;</span></div></div>
+    <div class="win-body"><div class="win-content about">
+      <p>hi im flo. built my first website at 12 — a fanpage for my favourite football club in microsoft frontpage. uploading it to an ftp server felt like magic. sold my first site at 14, to a dj. designed in photoshop, coded in html+css, with a flash player for the songs. peak 2000s.</p><br>
+      <p>after that came my maths teacher's art portfolio and a full rebuild of my school's website over a weekend. fell in love with design through the PSP homebrew scene — psp-source had a GFX section where kids with cracked photoshop made tiny artworks called "signatures" and taught each other the basics. that's where it started for me.</p><br>
+      <p>studied communication design, been in the game for 10+ years now. today i specialise in design systems — the infrastructure that lets teams ship without chaos. <a href="https://www.linkedin.com/in/florian-gampert/" target="_blank" rel="noopener">full story on linkedin</a>. for the serious work, see <a href="https://www.gampert.io" target="_blank" rel="noopener">gampert.io</a>.</p>
+    </div></div>
+    <div class="grip"></div>
+  </div>
+
+  <!-- LINKS -->
+  <div class="win z-purple" id="w-links" data-title="links.url" style="--bar:linear-gradient(90deg,#2d004a,#7b2fa0)">
+    <div class="win-bar"><span class="win-title">links.url</span><div class="win-ctrls"><span class="wbtn" data-a="min">_</span><span class="wbtn" data-a="max">&#9633;</span><span class="wbtn" data-a="close">&#215;</span></div></div>
+    <div class="win-body"><div class="win-content">
+      <ul class="links">
+        <li><a href="https://www.gampert.io" target="_blank" rel="noopener">gampert.io</a></li>
+        <li><a href="https://github.com/Blyawon" target="_blank" rel="noopener">github</a></li>
+        <li><a href="https://www.linkedin.com/in/florian-gampert/" target="_blank" rel="noopener">linkedin</a></li>
+        <li><a href="mailto:florian@gampert.io">email</a></li>
+      </ul>
+    </div></div>
+    <div class="grip"></div>
+  </div>
+
+  <marquee class="ticker" scrollamount="4">&#9733; welcome to gampert.dev &#9733; best viewed at any resolution &#9733; you are visitor #000,042 &#9733; this site is y2k compliant &#9733; no cookies, no tracking, no regrets &#9733; powered by caffeine &amp; questionable decisions &#9733; built with zero npm packages &#9733;</marquee>
+  <div class="footer">
+    <div class="counter">visitors: 000,042</div><br>
+    best viewed at any resolution, on any device, in any century
+    <div class="badges"><span class="badge">HTML</span><span class="badge">CSS</span><span class="badge">vanilla JS</span><span class="badge">vibe-coded</span></div>
+    <div class="last-updated" id="lastUpdated"></div>
+  </div>
+</div>
+
+<!-- TASKBAR -->
+<div class="taskbar">
+  <div class="start-btn" id="startBtn"><span>&#9632;</span> start</div>
+  <div class="tb-div"></div>
+  <div class="tb-wins" id="tbWins"></div>
+  <div class="tray">
+    <div class="tray-icon" id="sndToggle"><span id="sndIco">&#128264;</span><div class="tray-tip" id="sndTip">Sound: OFF</div></div>
+    <div class="tb-div" style="height:18px;margin:0 2px"></div>
+    <div class="clock-wrap"><div class="clock" id="clock"></div><div class="clock-tip" id="clockTip"></div></div>
+  </div>
+</div>
+
+<!--
+     ╔═══════════════════════════════════════════╗
+     ║  JAVASCRIPT                               ║
+     ║  one script tag. ~1000 lines of it.        ║
+     ║  no npm. no webpack. no regrets.          ║
+     ║                                           ║
+     ║  "details are not the details.            ║
+     ║   they make the design."                  ║
+     ║                     — charles eames       ║
+     ║                                           ║
+     ║  (ok fine that's not jony ive either      ║
+     ║   but the man never said anything         ║
+     ║   short enough to fit in a comment)       ║
+     ╚═══════════════════════════════════════════╝
+-->
+  <script src="js/main.js"></script>
+
+<!--
+     one last thing:
+
+     if you made it all the way down here,
+     you're either a developer, a recruiter
+     with unusually good instincts, or a bot.
+
+     either way: hi. thanks for reading.
+     the internet used to be full of
+     little sites like this. i miss that.
+
+              /\_/\
+             ( o.o )
+              > ^ <
+
+     florian@gampert.io
+     www.gampert.io
+
+     — flo, 2025
+-->
+
+</body>
+</html>
