@@ -59,7 +59,7 @@
     .taskbar {
       position: fixed; bottom: env(safe-area-inset-bottom, 4px); left: 0; right: 0; height: 36px;
       background: #c0c0c0; border-top: 2px solid #fff;
-      display: flex; align-items: center; padding: 2px 4px; gap: 2px;
+      display: flex; align-items: center; padding: 2px 32px; gap: 2px;
       z-index: 100; font: 11px 'Space Mono', monospace; color: #000;
     }
 
@@ -106,7 +106,7 @@
     │  — microsoft, 1994                           │
     └──────────────────────────────────────────────┘ */
 
-    .start-menu { display: none; position: fixed; bottom: 38px; left: 4px; width: 240px; background: #c0c0c0; border: 2px outset #ddd; z-index: 150; font: 12px 'Space Mono', monospace; color: #000; }
+    .start-menu { display: none; position: fixed; bottom: 38px; left: 32px; width: 240px; background: #c0c0c0; border: 2px outset #ddd; z-index: 150; font: 12px 'Space Mono', monospace; color: #000; }
     .start-menu.on { display: block; }
     .sm-side { position: absolute; left: 0; top: 0; bottom: 0; width: 24px; background: linear-gradient(180deg, #000080, #1084d0); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; }
     .sm-side span { writing-mode: vertical-rl; transform: rotate(180deg); color: #c0c0c0; font-weight: 700; font-size: 13px; letter-spacing: 2px; }
