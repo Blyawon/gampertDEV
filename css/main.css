@@ -57,7 +57,7 @@
     └──────────────────────────────────────────────┘ */
 
     .taskbar {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 36px;
+      position: fixed; bottom: env(safe-area-inset-bottom, 4px); left: 0; right: 0; height: 36px;
       background: #c0c0c0; border-top: 2px solid #fff;
       display: flex; align-items: center; padding: 2px 4px; gap: 2px;
       z-index: 100; font: 11px 'Space Mono', monospace; color: #000;
@@ -728,6 +728,7 @@
        * └─────────────────────────────────────┘
        *          + safe-area-inset-bottom                                  */
       .taskbar {
+        bottom: 0;
         height: auto;
         flex-wrap: wrap;
         padding: 2px 4px;
