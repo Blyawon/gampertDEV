@@ -106,10 +106,15 @@
 
   function restore(id) {
     var w = $(id), b = tb(id); if (!w) return; sClick();
-    w.classList.remove('hidden','mini','maxi'); syncMaxBtn(w);
+    w.classList.remove('hidden','mini');
+    if (mobile()) {
+      w.classList.add('maxi');
+    } else {
+      w.classList.remove('maxi');
+    }
+    syncMaxBtn(w);
     if (b) b.style.display = '';
     focus(id);
-    if (mobile()) w.scrollIntoView({ behavior:'smooth', block:'center' });
   }
 
   function maximize(id) {
@@ -321,9 +326,9 @@
       var tbH = document.querySelector('.taskbar').offsetHeight;
       sm.style.bottom = tbH + 'px';
       sm.style.maxHeight = (innerHeight - tbH - 10) + 'px';
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
     }
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
     sm.classList.add('on'); startBtn.classList.add('on'); overlay.classList.add('on');
   }
   function smClose() {
@@ -390,9 +395,8 @@
 
   // =========================================================
   //  AIM MESSENGER — draggable, taskbar-integrated
-  //  SmarterChild was the first chatbot. before ChatGPT,
-  //  before Siri, there was a robot on AIM that could
-  //  tell you the weather and roast you simultaneously.
+  //  the away message era. door open sound. u up?
+  //  if you know, you know.
   // =========================================================
   var aim = $('aim'), aimOpen = false;
   var aimTb = document.createElement('div');

@@ -563,8 +563,8 @@
 
 /*  ┌──────────────────────────────────────────────┐
     │  AIM MESSENGER                               │
-    │  remember away messages? remember             │
-    │  SmarterChild? good times.                   │
+    │  remember away messages? door sounds?          │
+    │  good times.                                 │
     └──────────────────────────────────────────────┘ */
 
     .aim { display: none; position: fixed; top: 60px; right: calc(50% - 180px); width: 360px; background: #c0c0c0; border: 2px outset #ddd; z-index: 190; font-family: 'Space Mono', monospace; }
