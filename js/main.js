@@ -80,26 +80,33 @@
     });
   }
 
+  function syncMaxBtn(w) {
+    var btn = w.querySelector('.wbtn[data-a="max"]');
+    if (!btn) return;
+    var isMax = w.classList.contains('maxi') || document.fullscreenElement === w;
+    btn.innerHTML = isMax ? '&#10064;' : '&#9633;';
+  }
+
   function minimize(id) {
     var w = $(id), b = tb(id); if (!w) return; sMin();
     // if this window is currently fullscreen, exit fullscreen first
     if (document.fullscreenElement === w) document.exitFullscreen();
     if (mobile()) { w.classList.add('mini'); w.classList.remove('hidden'); }
     else          { w.classList.add('hidden'); w.classList.remove('mini'); }
-    w.classList.remove('maxi','focus'); if (b) b.classList.remove('in');
+    w.classList.remove('maxi','focus'); syncMaxBtn(w); if (b) b.classList.remove('in');
   }
 
   function close(id) {
     var w = $(id), b = tb(id); if (!w) return; sMin();
     // if this window is currently fullscreen, exit fullscreen first
     if (document.fullscreenElement === w) document.exitFullscreen();
-    w.classList.add('hidden'); w.classList.remove('mini','maxi','focus');
+    w.classList.add('hidden'); w.classList.remove('mini','maxi','focus'); syncMaxBtn(w);
     if (b) b.style.display = 'none';
   }
 
   function restore(id) {
     var w = $(id), b = tb(id); if (!w) return; sClick();
-    w.classList.remove('hidden','mini','maxi');
+    w.classList.remove('hidden','mini','maxi'); syncMaxBtn(w);
     if (b) b.style.display = '';
     focus(id);
     if (mobile()) w.scrollIntoView({ behavior:'smooth', block:'center' });
@@ -114,14 +121,13 @@
     }
     // on mobile, Fullscreen API isn't supported for divs (iOS) or is flaky — use .maxi only and toggle off when tapped again
     if (mobile() && w.classList.contains('maxi')) {
-      w.classList.remove('maxi');
+      w.classList.remove('maxi'); syncMaxBtn(w);
       focus(id);
       return;
     }
-    w.classList.remove('hidden','mini'); w.classList.add('maxi'); focus(id);
-    if (mobile()) return;
+    w.classList.remove('hidden','mini'); w.classList.add('maxi'); syncMaxBtn(w); focus(id);
     var rfs = w.requestFullscreen || w.webkitRequestFullscreen || w.msRequestFullscreen;
-    if (rfs) rfs.call(w);
+    if (rfs) { var p = rfs.call(w); if (p && p.catch) p.catch(function(){}); }
   }
 
   // when the user exits fullscreen (e.g. pressing Escape), the browser
@@ -130,7 +136,7 @@
   // even though it's back to normal size.
   document.addEventListener('fullscreenchange', function() {
     if (!document.fullscreenElement) {
-      wins.forEach(function(w) { w.classList.remove('maxi'); });
+      wins.forEach(function(w) { w.classList.remove('maxi'); syncMaxBtn(w); });
     }
   });
 
@@ -309,8 +315,22 @@
   //  START MENU
   // =========================================================
   var sm = $('sm'), startBtn = $('startBtn'), overlay = $('overlay');
-  function smOpen()  { sClick(); sm.classList.add('on'); startBtn.classList.add('on'); overlay.classList.add('on'); }
-  function smClose() { sm.classList.remove('on'); startBtn.classList.remove('on'); overlay.classList.remove('on'); }
+  function smOpen()  {
+    sClick();
+    if (mobile()) {
+      var tbH = document.querySelector('.taskbar').offsetHeight;
+      sm.style.bottom = tbH + 'px';
+      sm.style.maxHeight = (innerHeight - tbH - 10) + 'px';
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    }
+    sm.classList.add('on'); startBtn.classList.add('on'); overlay.classList.add('on');
+  }
+  function smClose() {
+    sm.classList.remove('on'); startBtn.classList.remove('on'); overlay.classList.remove('on');
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  }
   startBtn.onclick = function(e) { e.stopPropagation(); sm.classList.contains('on') ? smClose() : smOpen(); };
   overlay.onclick  = function() { smClose(); ctxClose(); };
 
